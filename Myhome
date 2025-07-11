@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Social Platforms</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+      }
+      .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-lg transition-all hover:bg-primary/90 active:scale-95;
+      }
+      .nfc-pulse {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-gray-50 text-gray-800">
+  <main class="container mx-auto px-4 py-8">
+    <!-- 页面标题 -->
+    <section class="text-center mb-12">
+      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-400">
+        Global Social Platforms
+      </h2>
+      <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+        Access popular social media platforms from around the world with just one click
+      </p>
+    </section>
+    
+    <!-- 访问方式区域 -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+      <!-- 二维码区域 -->
+      <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+            <i class="fa fa-qrcode text-primary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold">Scan to Access</h3>
+        </div>
+        <p class="text-gray-600 mb-6">Scan this QR code with your phone to access this page instantly</p>
+        
+        <div class="flex justify-center">
+          <div class="bg-white p-4 rounded-lg shadow-md inline-block">
+            <div id="qrcode" class="w-48 h-48"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- NFC区域 -->
+      <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center mr-3">
+            <i class="fa fa-wifi text-secondary text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold">NFC Tap</h3>
+        </div>
+        <p class="text-gray-600 mb-6">Tap your phone against the NFC tag to open this page automatically</p>
+        
+        <div class="flex justify-center">
+          <div class="relative">
+            <div class="w-40 h-40 rounded-full bg-secondary/10 flex items-center justify-center nfc-pulse">
+              <i class="fa fa-mobile text-secondary text-5xl"></i>
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-24 h-24 rounded-full bg-secondary/20"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 text-center text-sm text-gray-500">
+          <p>NFC tag contains this page's URL</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 分类标签 -->
+    <div class="flex flex-wrap gap-2 mb-8" id="categoryFilters">
+      <button class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">All</button>
+      <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Social Networks</button>
+      <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Media Sharing</button>
+      <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Professional</button>
+      <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Messaging</button>
+    </div>
+    
+    <!-- 平台网格 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="socialPlatforms">
+      <!-- Facebook -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-[#1877F2]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#1877F2]/10 flex items-center justify-center">
+              <i class="fa fa-facebook text-[#1877F2] text-2xl"></i>
+            </div>
+            <span class="bg-[#1877F2]/10 text-[#1877F2] text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Facebook</h3>
+          <p class="text-gray-600 text-sm mb-4">The world's largest social network with over 2.8 billion monthly active users.</p>
+          <a href="https://www.facebook.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- Twitter -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-[#1DA1F2]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#1DA1F2]/10 flex items-center justify-center">
+              <i class="fa fa-twitter text-[#1DA1F2] text-2xl"></i>
+            </div>
+            <span class="bg-[#1DA1F2]/10 text-[#1DA1F2] text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Twitter</h3>
+          <p class="text-gray-600 text-sm mb-4">A microblogging platform focused on real-time information sharing.</p>
+          <a href="https://www.twitter.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- Instagram -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Media Sharing">
+        <div class="h-3 bg-gradient-to-r from-[#F58529] to-[#C13584]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-[#F58529]/10 to-[#C13584]/10 flex items-center justify-center">
+              <i class="fa fa-instagram text-[#C13584] text-2xl"></i>
+            </div>
+            <span class="bg-gradient-to-r from-[#F58529]/10 to-[#C13584]/10 text-[#C13584] text-xs px-2 py-1 rounded-full">Media Sharing</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Instagram</h3>
+          <p class="text-gray-600 text-sm mb-4">A photo and video sharing platform popular among younger audiences.</p>
+          <a href="https://www.instagram.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- LinkedIn -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Professional">
+        <div class="h-3 bg-[#0077B5]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#0077B5]/10 flex items-center justify-center">
+              <i class="fa fa-linkedin text-[#0077B5] text-2xl"></i>
+            </div>
+            <span class="bg-[#0077B5]/10 text-[#0077B5] text-xs px-2 py-1 rounded-full">Professional</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">LinkedIn</h3>
+          <p class="text-gray-600 text-sm mb-4">A professional networking platform focused on career development.</p>
+          <a href="https://www.linkedin.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- YouTube -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Media Sharing">
+        <div class="h-3 bg-[#FF0000]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#FF0000]/10 flex items-center justify-center">
+              <i class="fa fa-youtube-play text-[#FF0000] text-2xl"></i>
+            </div>
+            <span class="bg-[#FF0000]/10 text-[#FF0000] text-xs px-2 py-1 rounded-full">Media Sharing</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">YouTube</h3>
+          <p class="text-gray-600 text-sm mb-4">The world's largest video-sharing platform with billions of users.</p>
+          <a href="https://www.youtube.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- WhatsApp -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Messaging">
+        <div class="h-3 bg-[#25D366]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#25D366]/10 flex items-center justify-center">
+              <i class="fa fa-whatsapp text-[#25D366] text-2xl"></i>
+            </div>
+            <span class="bg-[#25D366]/10 text-[#25D366] text-xs px-2 py-1 rounded-full">Messaging</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">WhatsApp</h3>
+          <p class="text-gray-600 text-sm mb-4">A popular messaging app owned by Facebook, used worldwide.</p>
+          <a href="https://www.whatsapp.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- Pinterest -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Media Sharing">
+        <div class="h-3 bg-[#BD081C]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#BD081C]/10 flex items-center justify-center">
+              <i class="fa fa-pinterest text-[#BD081C] text-2xl"></i>
+            </div>
+            <span class="bg-[#BD081C]/10 text-[#BD081C] text-xs px-2 py-1 rounded-full">Media Sharing</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Pinterest</h3>
+          <p class="text-gray-600 text-sm mb-4">A visual discovery platform for finding ideas and inspiration.</p>
+          <a href="https://www.pinterest.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+      
+      <!-- Reddit -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-[#FF4500]"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#FF4500]/10 flex items-center justify-center">
+              <i class="fa fa-reddit text-[#FF4500] text-2xl"></i>
+            </div>
+            <span class="bg-[#FF4500]/10 text-[#FF4500] text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Reddit</h3>
+          <p class="text-gray-600 text-sm mb-4">A network of communities based on people's interests and hobbies.</p>
+          <a href="https://www.reddit.com" target="_blank" class="block w-full text-center btn-primary">
+            Visit Website
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 生成二维码
+    document.addEventListener('DOMContentLoaded', () => {
+      // 获取当前页面URL作为二维码内容
+      const currentUrl = window.location.href;
+      
+      // 生成二维码
+      new QRCode(document.getElementById("qrcode"), {
+        text: currentUrl,
+        width: 192,
+        height: 192,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // 分类筛选功能
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const socialCards = document.querySelectorAll('.social-card');
+      
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // 更新按钮样式
+          categoryBtns.forEach(b => {
+            b.classList.remove('bg-primary', 'text-white');
+            b.classList.add('bg-white', 'text-gray-800');
+          });
+          btn.classList.remove('bg-white', 'text-gray-800');
+          btn.classList.add('bg-primary', 'text-white');
+          
+          // 筛选卡片
+          const category = btn.textContent.trim();
+          socialCards.forEach(card => {
+            if (category === 'All' || card.dataset.category === category) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
