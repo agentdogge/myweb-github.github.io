@@ -11,8 +11,12 @@
       theme: {
         extend: {
           colors: {
-            primary: '#165DFF',
-            secondary: '#36D399'
+            facebook: '#1877F2',
+            instagram: '#C13584',
+            youtube: '#FF0000',
+            tiktok: '#000000',
+            whatsapp: '#25D366',
+            website: '#165DFF',
           },
           fontFamily: {
             inter: ['Inter', 'sans-serif'],
@@ -29,24 +33,23 @@
       .card-hover {
         @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
       }
-      .btn-primary {
-        @apply bg-primary text-white px-4 py-2 rounded-lg transition-all hover:bg-primary/90 active:scale-95;
+      .btn-facebook {
+        @apply bg-facebook text-white px-4 py-2 rounded-lg transition-all hover:bg-facebook/90 active:scale-95;
       }
-      .nfc-pulse {
-        animation: pulse 2s infinite;
+      .btn-instagram {
+        @apply bg-instagram text-white px-4 py-2 rounded-lg transition-all hover:bg-instagram/90 active:scale-95;
       }
-      @keyframes pulse {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 1; }
+      .btn-youtube {
+        @apply bg-youtube text-white px-4 py-2 rounded-lg transition-all hover:bg-youtube/90 active:scale-95;
       }
-      .nfc-wave {
-        animation: wave 2s infinite ease-in-out;
+      .btn-tiktok {
+        @apply bg-tiktok text-white px-4 py-2 rounded-lg transition-all hover:bg-tiktok/90 active:scale-95;
       }
-      @keyframes wave {
-        0% { transform: translateY(0) scale(0.9); opacity: 0.7; }
-        50% { transform: translateY(-10px) scale(1); opacity: 1; }
-        100% { transform: translateY(0) scale(0.9); opacity: 0.7; }
+      .btn-whatsapp {
+        @apply bg-whatsapp text-white px-4 py-2 rounded-lg transition-all hover:bg-whatsapp/90 active:scale-95;
+      }
+      .btn-website {
+        @apply bg-website text-white px-4 py-2 rounded-lg transition-all hover:bg-website/90 active:scale-95;
       }
     }
   </style>
@@ -55,7 +58,7 @@
   <main class="container mx-auto px-4 py-8">
     <!-- 页面标题 -->
     <section class="text-center mb-12">
-      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-400">
+      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-website to-blue-400">
         Aaftermarket card
       </h2>
       <p class="text-gray-600 max-w-2xl mx-auto text-lg">
@@ -65,7 +68,7 @@
     
     <!-- 分类标签 -->
     <div class="flex flex-wrap gap-2 mb-8" id="categoryFilters">
-      <button class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">All</button>
+      <button class="category-btn bg-website text-white px-4 py-2 rounded-full text-sm font-medium">All</button>
       <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Social Networks</button>
       <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Media Sharing</button>
     </div>
@@ -74,17 +77,17 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="socialPlatforms">
       <!-- Facebook -->
       <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Social Networks">
-        <div class="h-3 bg-[#1877F2]"></div>
+        <div class="h-3 bg-facebook"></div>
         <div class="p-6">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-[#1877F2]/10 flex items-center justify-center">
-              <i class="fa fa-facebook text-[#1877F2] text-2xl"></i>
+            <div class="w-12 h-12 rounded-lg bg-facebook/10 flex items-center justify-center">
+              <i class="fa fa-facebook text-facebook text-2xl"></i>
             </div>
-            <span class="bg-[#1877F2]/10 text-[#1877F2] text-xs px-2 py-1 rounded-full">Social Network</span>
+            <span class="bg-facebook/10 text-facebook text-xs px-2 py-1 rounded-full">Social Network</span>
           </div>
           <h3 class="text-xl font-bold mb-2">Facebook</h3>
-          <p class="text-gray-600 text-sm mb-4">The world's largest social network with over 2.8 billion monthly active users.</p>
-          <a href="https://www.facebook.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-primary">
+          <p class="text-gray-600 text-sm h-12 mb-4 overflow-hidden">The world's largest social network with over 2.8 billion monthly active users.</p>
+          <a href="https://www.facebook.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-facebook">
             Visit Website
           </a>
         </div>
@@ -92,17 +95,17 @@
       
       <!-- Instagram -->
       <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Media Sharing">
-        <div class="h-3 bg-gradient-to-r from-[#F58529] to-[#C13584]"></div>
+        <div class="h-3 bg-instagram"></div>
         <div class="p-6">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-[#F58529]/10 to-[#C13584]/10 flex items-center justify-center">
-              <i class="fa fa-instagram text-[#C13584] text-2xl"></i>
+            <div class="w-12 h-12 rounded-lg bg-instagram/10 flex items-center justify-center">
+              <i class="fa fa-instagram text-instagram text-2xl"></i>
             </div>
-            <span class="bg-gradient-to-r from-[#F58529]/10 to-[#C13584]/10 text-[#C13584] text-xs px-2 py-1 rounded-full">Media Sharing</span>
+            <span class="bg-instagram/10 text-instagram text-xs px-2 py-1 rounded-full">Media Sharing</span>
           </div>
           <h3 class="text-xl font-bold mb-2">Instagram</h3>
-          <p class="text-gray-600 text-sm mb-4">A photo and video sharing platform popular among younger audiences.</p>
-          <a href="https://www.instagram.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-primary">
+          <p class="text-gray-600 text-sm h-12 mb-4 overflow-hidden">A photo and video sharing platform popular among younger audiences.</p>
+          <a href="https://www.instagram.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-instagram">
             Visit Website
           </a>
         </div>
@@ -110,17 +113,17 @@
       
       <!-- YouTube -->
       <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Media Sharing">
-        <div class="h-3 bg-[#FF0000]"></div>
+        <div class="h-3 bg-youtube"></div>
         <div class="p-6">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-[#FF0000]/10 flex items-center justify-center">
-              <i class="fa fa-youtube-play text-[#FF0000] text-2xl"></i>
+            <div class="w-12 h-12 rounded-lg bg-youtube/10 flex items-center justify-center">
+              <i class="fa fa-youtube-play text-youtube text-2xl"></i>
             </div>
-            <span class="bg-[#FF0000]/10 text-[#FF0000] text-xs px-2 py-1 rounded-full">Media Sharing</span>
+            <span class="bg-youtube/10 text-youtube text-xs px-2 py-1 rounded-full">Media Sharing</span>
           </div>
           <h3 class="text-xl font-bold mb-2">YouTube</h3>
-          <p class="text-gray-600 text-sm mb-4">The world's largest video-sharing platform with billions of users.</p>
-          <a href="https://www.youtube.com/@Xitumaoyiebike" target="_blank" class="block w-full text-center btn-primary">
+          <p class="text-gray-600 text-sm h-12 mb-4 overflow-hidden">The world's largest video-sharing platform with billions of users.</p>
+          <a href="https://www.youtube.com/@Xitumaoyiebike" target="_blank" class="block w-full text-center btn-youtube">
             Visit Website
           </a>
         </div>
@@ -128,17 +131,53 @@
 
       <!-- TikTok -->
       <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Social Networks">
-        <div class="h-3 bg-black"></div>
+        <div class="h-3 bg-tiktok"></div>
         <div class="p-6">
           <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-lg bg-black/10 flex items-center justify-center">
-              <i class="fa fa-music text-black text-2xl"></i>
+            <div class="w-12 h-12 rounded-lg bg-tiktok/10 flex items-center justify-center">
+              <i class="fa fa-music text-tiktok text-2xl"></i>
             </div>
-            <span class="bg-black/10 text-black text-xs px-2 py-1 rounded-full">Social Network</span>
+            <span class="bg-tiktok/10 text-tiktok text-xs px-2 py-1 rounded-full">Social Network</span>
           </div>
           <h3 class="text-xl font-bold mb-2">TikTok</h3>
-          <p class="text-gray-600 text-sm mb-4">A short - form video sharing social networking service.</p>
-          <a href="https://www.tiktok.com/@xitumaoyiebike" target="_blank" class="block w-full text-center btn-primary">
+          <p class="text-gray-600 text-sm h-12 mb-4 overflow-hidden">A short - form video sharing social networking service.</p>
+          <a href="https://www.tiktok.com/@xitumaoyiebike" target="_blank" class="block w-full text-center btn-tiktok">
+            Visit Website
+          </a>
+        </div>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Social Networks">
+        <div class="h-3 bg-whatsapp"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-whatsapp/10 flex items-center justify-center">
+              <i class="fa fa-whatsapp text-whatsapp text-2xl"></i>
+            </div>
+            <span class="bg-whatsapp/10 text-whatsapp text-xs px-2 py-1 rounded-full">Social Network</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">WhatsApp</h3>
+          <p class="text-gray-600 text-sm h-12 mb-4 overflow-hidden">A cross-platform messaging service with over 2 billion users worldwide.</p>
+          <a href="https://wa.me/your-phone-number" target="_blank" class="block w-full text-center btn-whatsapp">
+            Message Us
+          </a>
+        </div>
+      </div>
+
+      <!-- 独立站 -->
+      <div class="social-card bg-white rounded-xl shadow-md overflow-hidden card-hover" data-category="Independent Website">
+        <div class="h-3 bg-website"></div>
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-12 h-12 rounded-lg bg-website/10 flex items-center justify-center">
+              <i class="fa fa-globe text-website text-2xl"></i>
+            </div>
+            <span class="bg-website/10 text-website text-xs px-2 py-1 rounded-full">Independent Website</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">Independent Website</h3>
+          <p class="text-gray-600 text-sm h-12 mb-4 overflow-hidden">Our independent e-commerce website.</p>
+          <a href="https://www.example.com" target="_blank" class="block w-full text-center btn-website">
             Visit Website
           </a>
         </div>
@@ -152,25 +191,30 @@
       const categoryBtns = document.querySelectorAll('.category-btn');
       const socialCards = document.querySelectorAll('.social-card');
       
-      categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          // 更新按钮样式
-          categoryBtns.forEach(b => {
-            b.classList.remove('bg-primary', 'text-white');
-            b.classList.add('bg-white', 'text-gray-800');
-          });
-          btn.classList.remove('bg-white', 'text-gray-800');
-          btn.classList.add('bg-primary', 'text-white');
-          
-          // 筛选卡片
-          const category = btn.textContent.trim();
-          socialCards.forEach(card => {
-            if (category === 'All' || card.dataset.category === category) {
-              card.style.display = 'block';
-            } else {
-              card.style.display = 'none';
-            }
-          });
+      // 添加WhatsApp到分类筛选
+      categoryBtns[0].addEventListener('click', () => {
+        socialCards.forEach(card => {
+          card.style.display = 'block';
+        });
+      });
+      
+      categoryBtns[1].addEventListener('click', () => {
+        socialCards.forEach(card => {
+          if (card.dataset.category === 'Social Networks') {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+      
+      categoryBtns[2].addEventListener('click', () => {
+        socialCards.forEach(card => {
+          if (card.dataset.category === 'Media Sharing') {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
         });
       });
     });
