@@ -6,7 +6,6 @@
   <title>Global Social Platforms</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -41,6 +40,14 @@
         50% { transform: scale(1.05); opacity: 0.8; }
         100% { transform: scale(1); opacity: 1; }
       }
+      .nfc-wave {
+        animation: wave 2s infinite ease-in-out;
+      }
+      @keyframes wave {
+        0% { transform: translateY(0) scale(0.9); opacity: 0.7; }
+        50% { transform: translateY(-10px) scale(1); opacity: 1; }
+        100% { transform: translateY(0) scale(0.9); opacity: 0.7; }
+      }
     }
   </style>
 </head>
@@ -48,8 +55,8 @@
   <main class="container mx-auto px-4 py-8">
     <!-- 页面标题 -->
     <section class="text-center mb-12">
-     <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-400">
-        After-sales card
+      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-400">
+        Aaftermarket card
       </h2>
       <p class="text-gray-600 max-w-2xl mx-auto text-lg">
         You can use this card to quickly find all of our social media accounts
@@ -70,7 +77,8 @@
         
         <div class="flex justify-center">
           <div class="bg-white p-4 rounded-lg shadow-md inline-block">
-            <div id="qrcode" class="w-48 h-48"></div>
+            <!-- 使用预先生成的二维码图片 -->
+            <img src="qrcode.png" alt="QR Code" class="w-48 h-48 rounded-lg" />
           </div>
         </div>
       </div>
@@ -86,12 +94,14 @@
         <p class="text-gray-600 mb-6">Tap your phone against the NFC tag to open this page automatically</p>
         
         <div class="flex justify-center">
-          <div class="relative">
-            <div class="w-40 h-40 rounded-full bg-secondary/10 flex items-center justify-center nfc-pulse">
-              <i class="fa fa-mobile text-secondary text-5xl"></i>
+          <div class="relative w-40 h-40">
+            <!-- 动态NFC图片 -->
+            <div class="absolute inset-0 flex items-center justify-center nfc-pulse">
+              <img src="nfc-icon.svg" alt="NFC Icon" class="w-24 h-24 nfc-wave" />
             </div>
+            <!-- 手机图标 -->
             <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-24 h-24 rounded-full bg-secondary/20"></div>
+              <i class="fa fa-mobile text-secondary text-6xl"></i>
             </div>
           </div>
         </div>
@@ -123,7 +133,7 @@
           </div>
           <h3 class="text-xl font-bold mb-2">Facebook</h3>
           <p class="text-gray-600 text-sm mb-4">The world's largest social network with over 2.8 billion monthly active users.</p>
-          <a href="https://www.facebook.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-primary">
+          <a href="https://www.facebook.com" target="_blank" class="block w-full text-center btn-primary">
             Visit Website
           </a>
         </div>
@@ -141,7 +151,7 @@
           </div>
           <h3 class="text-xl font-bold mb-2">Instagram</h3>
           <p class="text-gray-600 text-sm mb-4">A photo and video sharing platform popular among younger audiences.</p>
-          <a href="https://www.instagram.com/xitumaoyiebike/" target="_blank" class="block w-full text-center btn-primary">
+          <a href="https://www.instagram.com" target="_blank" class="block w-full text-center btn-primary">
             Visit Website
           </a>
         </div>
@@ -159,7 +169,7 @@
           </div>
           <h3 class="text-xl font-bold mb-2">YouTube</h3>
           <p class="text-gray-600 text-sm mb-4">The world's largest video-sharing platform with billions of users.</p>
-          <a href="https://www.youtube.com/@Xitumaoyiebike" target="_blank" class="block w-full text-center btn-primary">
+          <a href="https://www.youtube.com" target="_blank" class="block w-full text-center btn-primary">
             Visit Website
           </a>
         </div>
@@ -177,7 +187,7 @@
           </div>
           <h3 class="text-xl font-bold mb-2">TikTok</h3>
           <p class="text-gray-600 text-sm mb-4">A short - form video sharing social networking service.</p>
-          <a href="https://www.tiktok.com/@xitumaoyiebike" target="_blank" class="block w-full text-center btn-primary">
+          <a href="https://www.tiktok.com" target="_blank" class="block w-full text-center btn-primary">
             Visit Website
           </a>
         </div>
@@ -186,22 +196,8 @@
   </main>
 
   <script>
-    // 生成二维码
+    // 分类筛选功能
     document.addEventListener('DOMContentLoaded', () => {
-      // 获取当前页面URL作为二维码内容
-      const currentUrl = window.location.href;
-      
-      // 生成二维码
-      new QRCode(document.getElementById("qrcode"), {
-        text: currentUrl,
-        width: 192,
-        height: 192,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-      });
-
-      // 分类筛选功能
       const categoryBtns = document.querySelectorAll('.category-btn');
       const socialCards = document.querySelectorAll('.social-card');
       
