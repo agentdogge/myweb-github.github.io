@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- 原有的头部代码保持不变 -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Global Social Platforms</title>
@@ -33,6 +34,7 @@
   </script>
   <style type="text/tailwindcss">
     @layer utilities {
+      /* 原有的样式代码保持不变 */
       .content-auto {
         content-visibility: auto;
       }
@@ -146,7 +148,7 @@
 </head>
 <body class="font-inter bg-gray-50 text-gray-800">
   <!-- 引导模态框 -->
-  <div id="welcomeModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 fade-in">
+  <div id="welcomeModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 fade-in hidden">
     <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-verification/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -189,6 +191,7 @@
   </div>
 
   <main class="container mx-auto px-4 py-8">
+    <!-- 原有的主体内容代码保持不变 -->
     <!-- 页面标题 -->
     <section class="text-center mb-12">
       <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-website to-blue-400">
@@ -574,10 +577,8 @@
         return;
       }
       
-      // 如果已有验证码或已验证，不显示引导模态框
-      if (!storedCode || !storedDeviceId || !deviceId || deviceId !== storedDeviceId) {
-        welcomeModal.classList.remove('hidden');
-      }
+      // 直接隐藏引导模态框
+      welcomeModal.classList.add('hidden');
       
       // 处理引导模态框
       confirmWelcomeBtn.addEventListener('click', () => {
