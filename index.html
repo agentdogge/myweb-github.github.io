@@ -142,6 +142,26 @@
     </div>
   </div>
 
+  <!-- 已提交提示模态框 -->
+  <div id="alreadySubmittedModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden fade-in">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa fa-lock text-2xl text-gray-500"></i>
+        </div>
+        <h4 class="text-xl font-bold text-gray-800">Already Submitted</h4>
+        <p class="text-gray-600 mt-2" id="alreadySubmittedMessage">
+          You have already submitted your information. Each person can only submit once.
+        </p>
+      </div>
+      <div class="flex justify-center">
+        <button id="closeSubmittedModalBtn" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg transition-all hover:bg-gray-300 active:scale-95">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
   <main class="container mx-auto px-4 py-8">
     <!-- 页面标题 -->
     <section class="text-center mb-12">
@@ -286,27 +306,66 @@
   </main>
 
   <script>
+    // 生成唯一设备标识
+    function generateDeviceId() {
+      // 使用浏览器信息生成一个基本的设备标识
+      const navigatorInfo = [
+        navigator.userAgent,
+        navigator.platform,
+        navigator.vendor,
+        navigator.language
+      ].join('|');
+      
+      // 使用简单的哈希算法生成ID
+      let hash = 0;
+      for (let i = 0; i < navigatorInfo.length; i++) {
+        const char = navigatorInfo.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0; // Convert to 32bit integer
+      }
+      
+      // 添加时间戳使ID更唯一
+      const timestamp = new Date().getTime();
+      
+      return `device-${Math.abs(hash)}-${timestamp}`;
+    }
+    
     // 模拟NFC卡片检测
     document.addEventListener('DOMContentLoaded', () => {
       // DOM元素
       const nfcModal = document.getElementById('nfcModal');
       const confirmSubmitModal = document.getElementById('confirmSubmitModal');
+      const alreadySubmittedModal = document.getElementById('alreadySubmittedModal');
       const visitorNameInput = document.getElementById('visitorName');
       const confirmNfcBtn = document.getElementById('confirmNfcBtn');
       const cancelNfcBtn = document.getElementById('cancelNfcBtn');
       const cancelSubmitBtn = document.getElementById('cancelSubmitBtn');
       const submitBtn = document.getElementById('submitBtn');
+      const closeSubmittedModalBtn = document.getElementById('closeSubmittedModalBtn');
       const visitorList = document.getElementById('visitorList');
       const visitorCount = document.getElementById('visitorCount');
       const scrollContainer = visitorList.parentElement;
       const confirmMessage = document.getElementById('confirmMessage');
+      const alreadySubmittedMessage = document.getElementById('alreadySubmittedMessage');
+      
+      // 生成或获取设备ID
+      let deviceId = localStorage.getItem('nfcDeviceId');
+      if (!deviceId) {
+        deviceId = generateDeviceId();
+        localStorage.setItem('nfcDeviceId', deviceId);
+      }
       
       // 从localStorage加载访客数据
       let visitors = JSON.parse(localStorage.getItem('nfcVisitors')) || [];
       let currentUserName = '';
       
       // 检查用户是否已提交过
-      const hasSubmitted = localStorage.getItem('nfcUserSubmitted') === 'true';
+      const hasSubmitted = visitors.some(v => v.deviceId === deviceId);
+      if (hasSubmitted) {
+        const user = visitors.find(v => v.deviceId === deviceId);
+        alreadySubmittedMessage.textContent = `You (${user.name}) have already submitted your information. Each person can only submit once.`;
+        alreadySubmittedModal.classList.remove('hidden');
+      }
       
       // 更新访客列表和计数
       function updateVisitorList() {
@@ -407,17 +466,15 @@
       function submitVisitor() {
         if (!currentUserName) return;
         
-        // 添加访客
+        // 添加访客（包含设备ID）
         visitors.push({
           name: currentUserName,
-          time: new Date().toISOString()
+          time: new Date().toISOString(),
+          deviceId: deviceId
         });
         
         // 更新列表
         updateVisitorList();
-        
-        // 标记用户已提交
-        localStorage.setItem('nfcUserSubmitted', 'true');
         
         // 隐藏模态框
         confirmSubmitModal.classList.add('hidden');
@@ -450,7 +507,9 @@
       function simulateNFCDetection() {
         // 如果用户已提交，不再显示模态框
         if (hasSubmitted) {
-          console.log('User has already submitted information.');
+          const user = visitors.find(v => v.deviceId === deviceId);
+          alreadySubmittedMessage.textContent = `You (${user.name}) have already submitted your information. Each person can only submit once.`;
+          alreadySubmittedModal.classList.remove('hidden');
           return;
         }
         
@@ -479,6 +538,10 @@
       });
       
       submitBtn.addEventListener('click', submitVisitor);
+      
+      closeSubmittedModalBtn.addEventListener('click', () => {
+        alreadySubmittedModal.classList.add('hidden');
+      });
       
       // 为演示目的，自动触发NFC检测
       if (!hasSubmitted) {
