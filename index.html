@@ -66,13 +66,6 @@
       </p>
     </section>
     
-    <!-- 分类标签 -->
-    <div class="flex flex-wrap gap-2 mb-8" id="categoryFilters">
-      <button class="category-btn bg-website text-white px-4 py-2 rounded-full text-sm font-medium">All</button>
-      <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Social Networks</button>
-      <button class="category-btn bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">Media Sharing</button>
-    </div>
-    
     <!-- 平台网格 -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="socialPlatforms">
       <!-- Facebook -->
@@ -184,40 +177,5 @@
       </div>
     </div>
   </main>
-
-  <script>
-    // 分类筛选功能
-    document.addEventListener('DOMContentLoaded', () => {
-      const categoryBtns = document.querySelectorAll('.category-btn');
-      const socialCards = document.querySelectorAll('.social-card');
-      
-      // 添加WhatsApp到分类筛选
-      categoryBtns[0].addEventListener('click', () => {
-        socialCards.forEach(card => {
-          card.style.display = 'block';
-        });
-      });
-      
-      categoryBtns[1].addEventListener('click', () => {
-        socialCards.forEach(card => {
-          if (card.dataset.category === 'Social Networks') {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-      
-      categoryBtns[2].addEventListener('click', () => {
-        socialCards.forEach(card => {
-          if (card.dataset.category === 'Media Sharing') {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-    });
-  </script>
 </body>
 </html>
