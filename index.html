@@ -168,26 +168,6 @@
     </div>
   </div>
 
-  <!-- 错误提示模态框 -->
-  <div id="errorModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 fade-in">
-      <div class="text-center mb-6">
-        <div class="w-16 h-16 bg-error/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="fa fa-exclamation-circle text-2xl text-error"></i>
-        </div>
-        <h4 class="text-xl font-bold text-gray-800" id="errorModalTitle">Verification Error</h4>
-        <p class="text-gray-600 mt-2" id="errorModalMessage">
-          An error occurred during verification. Please try again.
-        </p>
-      </div>
-      <div class="flex justify-center">
-        <button id="closeErrorBtn" class="bg-error text-white px-6 py-3 rounded-lg transition-all hover:bg-error/90 active:scale-95">
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-
   <main class="container mx-auto px-4 py-8">
     <!-- 页面标题 -->
     <section class="text-center mb-12">
@@ -414,36 +394,8 @@
               </div>
             </div>
           </div>
-          <div id="deviceMismatch" class="hidden">
-            <div class="p-4 bg-error/10 rounded-lg border border-error/30">
-              <div class="flex items-center">
-                <i class="fa fa-exclamation-circle text-2xl text-error mr-3"></i>
-                <div class="text-left">
-                  <h4 class="font-bold text-error">Device Mismatch</h4>
-                  <p class="text-sm text-gray-600">
-                    This verification code is linked to a different device.
-                    <br>One-time codes cannot be transferred between devices.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="codePermanentlyLocked" class="hidden">
-            <div class="p-4 bg-error/10 rounded-lg border border-error/30">
-              <div class="flex items-center">
-                <i class="fa fa-lock text-2xl text-error mr-3"></i>
-                <div class="text-left">
-                  <h4 class="font-bold text-error">Code Permanently Locked</h4>
-                  <p class="text-sm text-gray-600">
-                    A verification code has already been generated for this device.
-                    <br>One-time codes cannot be regenerated.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="mt-6">
-            <div id="finalCodeDisplay" class="verification-code code-expired blur-out">------</div>
+            <div class="verification-code code-expired blur-out">------</div>
             <p class="text-sm text-gray-500 mt-2">This code has expired and cannot be used</p>
           </div>
           <button id="newCodeBtn" class="btn-verification mt-6" disabled>
@@ -483,96 +435,14 @@
       const welcomeModal = document.getElementById('welcomeModal');
       const confirmWelcomeBtn = document.getElementById('confirmWelcomeBtn');
       const cancelWelcomeBtn = document.getElementById('cancelWelcomeBtn');
-      const errorModal = document.getElementById('errorModal');
-      const errorModalTitle = document.getElementById('errorModalTitle');
-      const errorModalMessage = document.getElementById('errorModalMessage');
-      const closeErrorBtn = document.getElementById('closeErrorBtn');
-      const deviceMismatch = document.getElementById('deviceMismatch');
-      const codePermanentlyLocked = document.getElementById('codePermanentlyLocked');
-      const finalCodeDisplay = document.getElementById('finalCodeDisplay');
       
-      // 生成唯一设备ID（增强版，使用多种浏览器指纹信息）
-      function generateDeviceId() {
-        // 收集多种浏览器特征
-        const navigatorInfo = [
-          navigator.userAgent,
-          navigator.platform,
-          navigator.language,
-          navigator.hardwareConcurrency,
-          window.screen.width,
-          window.screen.height,
-          window.devicePixelRatio,
-          window.screen.colorDepth,
-          new Date().getTimezoneOffset(),
-          localStorage.getItem('nfcDeviceSalt') || Math.random().toString(36).substring(2)
-        ];
-        
-        // 使用简单的哈希算法生成ID
-        let hash = 0;
-        for (let i = 0; i < navigatorInfo.length; i++) {
-          const value = navigatorInfo[i] || '';
-          for (let j = 0; j < value.length; j++) {
-            const char = value.charCodeAt(j);
-            hash = ((hash << 5) - hash) + char;
-            hash |= 0; // Convert to 32bit integer
-          }
-        }
-        
-        // 添加时间戳使ID更唯一
-        return Math.abs(hash).toString(36) + Date.now().toString(36);
-      }
-      
-      // 获取或生成设备ID
-      function getDeviceId() {
-        let deviceId = localStorage.getItem('nfcDeviceId');
-        if (!deviceId) {
-          // 首次生成设备ID时添加随机盐值
-          if (!localStorage.getItem('nfcDeviceSalt')) {
-            localStorage.setItem('nfcDeviceSalt', Math.random().toString(36).substring(2, 15));
-          }
-          
-          deviceId = generateDeviceId();
-          localStorage.setItem('nfcDeviceId', deviceId);
-        }
-        return deviceId;
-      }
-      
-      // 检查是否已有绑定的验证码或永久锁定标识
-      const deviceId = getDeviceId();
+      // 检查是否已有绑定的验证码
+      const deviceId = localStorage.getItem('nfcDeviceId') || null;
       const storedCode = localStorage.getItem('nfcVerificationCode');
       const storedDeviceId = localStorage.getItem('nfcLinkedDeviceId');
       const codeVerified = localStorage.getItem('nfcCodeVerified') === 'true';
       const codeRevealed = localStorage.getItem('nfcCodeRevealed') === 'true';
       const codeExpirationTime = localStorage.getItem('nfcCodeExpirationTime');
-      const codeExpiredFlag = localStorage.getItem('nfcCodeExpired') === 'true';
-      const codePermanentlyGenerated = localStorage.getItem('nfcCodePermanentlyGenerated') === 'true';
-      
-      // 检查是否存在永久锁定标识
-      if (codePermanentlyGenerated) {
-        // 无论设备是否匹配，都禁止生成新验证码
-        generatorSection.classList.add('hidden');
-        postVerificationSection.classList.remove('hidden');
-        codePermanentlyLocked.classList.remove('hidden');
-        
-        // 如果有存储的验证码，显示已过期的验证码
-        if (storedCode) {
-          finalCodeDisplay.textContent = storedCode;
-        }
-        
-        return;
-      }
-      
-      // 检测设备变更
-      if (storedCode && storedDeviceId && storedDeviceId !== deviceId) {
-        // 设备不匹配，显示错误
-        generatorSection.classList.add('hidden');
-        postVerificationSection.classList.remove('hidden');
-        deviceMismatch.classList.remove('hidden');
-        if (storedCode) {
-          finalCodeDisplay.textContent = storedCode;
-        }
-        return;
-      }
       
       // 如果已有验证码或已验证，不显示引导模态框
       if (!storedCode || !storedDeviceId || !deviceId || deviceId !== storedDeviceId) {
@@ -589,18 +459,12 @@
         // 回到主页面（这里只是隐藏模态框，实际应用中可能需要重定向）
       });
       
-      // 处理错误模态框
-      closeErrorBtn.addEventListener('click', () => {
-        errorModal.classList.add('hidden');
-      });
-      
       // 如果已有绑定的验证码但未验证，直接显示
       if (codeVerified) {
         // 验证码已验证，显示成功状态
         generatorSection.classList.add('hidden');
         postVerificationSection.classList.remove('hidden');
         verificationSuccess.classList.remove('hidden');
-        finalCodeDisplay.textContent = storedCode || '------';
       } else if (codeRevealed && codeExpirationTime && Date.now() > parseInt(codeExpirationTime)) {
         // 验证码已显示且已过期
         generatorSection.classList.add('hidden');
@@ -609,7 +473,6 @@
         newCodeBtn.disabled = true;
         newCodeBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
         newCodeBtn.classList.remove('bg-verification', 'hover:bg-verification/90', 'active:scale-95');
-        finalCodeDisplay.textContent = storedCode || '------';
       } else if (storedCode && storedDeviceId === deviceId) {
         // 已有绑定的验证码但未验证
         verifiedCode.textContent = storedCode;
@@ -628,14 +491,6 @@
       
       // 生成新验证码
       generateBtn.addEventListener('click', () => {
-        // 再次检查是否已有永久锁定标识
-        if (localStorage.getItem('nfcCodePermanentlyGenerated') === 'true') {
-          generatorSection.classList.add('hidden');
-          postVerificationSection.classList.remove('hidden');
-          codePermanentlyLocked.classList.remove('hidden');
-          return;
-        }
-        
         if (storedCode && storedDeviceId === deviceId) {
           return;
         }
@@ -651,16 +506,17 @@
         // 显示验证码
         verificationCode.textContent = code;
         
-        // 绑定到设备
+        // 模拟NFC卡绑定
+        if (!deviceId) {
+          const newDeviceId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          localStorage.setItem('nfcDeviceId', newDeviceId);
+        }
+        
         localStorage.setItem('nfcVerificationCode', code);
-        localStorage.setItem('nfcLinkedDeviceId', deviceId);
+        localStorage.setItem('nfcLinkedDeviceId', deviceId || localStorage.getItem('nfcDeviceId'));
         localStorage.removeItem('nfcCodeVerified');
         localStorage.removeItem('nfcCodeRevealed');
         localStorage.removeItem('nfcCodeExpirationTime');
-        localStorage.removeItem('nfcCodeExpired');
-        
-        // 添加永久锁定标识
-        localStorage.setItem('nfcCodePermanentlyGenerated', 'true');
         
         // 更新UI状态
         setTimeout(() => {
@@ -761,28 +617,11 @@
         // 模糊显示验证码
         verifiedCode.classList.add('blur-out', 'code-expired');
         verifiedCode.classList.remove('code-verified');
-        finalCodeDisplay.textContent = verifiedCode.textContent;
         
         // 记录验证码已过期
         localStorage.setItem('nfcCodeExpired', 'true');
       }
-      
-      // 防止刷新重置状态
-      window.addEventListener('beforeunload', () => {
-        // 如果验证码已显示但未过期，确保刷新后继续倒计时
-        if (codeRevealed && codeExpirationTime && Date.now() < parseInt(codeExpirationTime)) {
-          localStorage.setItem('nfcCodeRevealed', 'true');
-          localStorage.setItem('nfcCodeExpirationTime', codeExpirationTime);
-        }
-      });
-      
-      // 检测存储变化（用于多标签页同步）
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'nfcCodeExpirationTime' || e.key === 'nfcCodeRevealed' || e.key === 'nfcCodePermanentlyGenerated') {
-          location.reload(); // 刷新页面以同步状态
-        }
-      });
     });
   </script>
 </body>
-</html>  
+</html>
