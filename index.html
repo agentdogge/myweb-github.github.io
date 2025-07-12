@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- 原有的头部代码保持不变 -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Global Social Platforms</title>
@@ -18,12 +17,7 @@
             tiktok: '#000000',
             whatsapp: '#25D366',
             website: '#165DFF',
-            verification: '#6366F1',
-            verified: '#10B981',
-            locked: '#EF4444',
-            error: '#F87272',
-            success: '#10B981',
-            warning: '#FBBF24',
+            counter: '#3B82F6',
           },
           fontFamily: {
             inter: ['Inter', 'sans-serif'],
@@ -34,7 +28,6 @@
   </script>
   <style type="text/tailwindcss">
     @layer utilities {
-      /* 保留与社交平台卡片相关的样式 */
       .content-auto {
         content-visibility: auto;
       }
@@ -59,18 +52,60 @@
       .btn-website {
         @apply bg-website text-white px-4 py-2 rounded-lg transition-all hover:bg-website/90 active:scale-95;
       }
-      /* 删除所有与验证码相关的自定义样式 */
+      .visitor-card {
+        @apply bg-white rounded-lg shadow-sm p-4 mb-3 transition-all hover:shadow-md;
+      }
+      .visitor-name {
+        @apply font-semibold text-gray-800;
+      }
+      .visitor-time {
+        @apply text-sm text-gray-500 mt-1;
+      }
+      .counter-badge {
+        @apply bg-counter text-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-md;
+      }
     }
   </style>
 </head>
 <body class="font-inter bg-gray-50 text-gray-800">
+  <!-- 访问统计模态框 -->
+  <div id="nfcModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden fade-in">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-counter/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa fa-id-card text-2xl text-counter"></i>
+        </div>
+        <h4 class="text-xl font-bold text-gray-800">NFC Card Detected</h4>
+        <p class="text-gray-600 mt-2">
+          Please enter your name to be recorded in our visitor log.
+        </p>
+      </div>
+      <div class="mb-4">
+        <label for="visitorName" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+        <input type="text" id="visitorName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-counter focus:border-counter outline-none transition-all" placeholder="Enter your name">
+      </div>
+      <div class="flex gap-3">
+        <button id="cancelNfcBtn" class="flex-1 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg transition-all hover:bg-gray-300 active:scale-95">
+          Cancel
+        </button>
+        <button id="confirmNfcBtn" class="flex-1 bg-counter text-white px-4 py-3 rounded-lg transition-all hover:bg-counter/90 active:scale-95">
+          <i class="fa fa-check mr-1"></i> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
   <main class="container mx-auto px-4 py-8">
-    <!-- 原有的主体内容代码保持不变 -->
     <!-- 页面标题 -->
     <section class="text-center mb-12">
-      <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-website to-blue-400">
-        After-sales Service Card
-      </h2>
+      <div class="flex justify-center items-center mb-4">
+        <div class="counter-badge mr-3">
+          <span id="visitorCount">0</span>
+        </div>
+        <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-website to-blue-400">
+          After-sales Service Card
+        </h2>
+      </div>
       <p class="text-gray-600 max-w-2xl mx-auto text-lg">
         You can use this card to quickly find all of our social media accounts
       </p>
@@ -186,6 +221,136 @@
         </div>
       </div>
     </div>
+
+    <!-- 访问统计模块 -->
+    <section class="mt-16">
+      <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">Recent Visitors</h3>
+      <div class="bg-white rounded-xl shadow-lg p-6 max-w-md mx-auto">
+        <div id="visitorList" class="space-y-3">
+          <!-- 访问记录将动态添加到这里 -->
+          <div class="text-center text-gray-500 py-4">
+            <i class="fa fa-hourglass-half mr-2"></i> No visitors yet
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <script>
+    // 模拟NFC卡片检测
+    document.addEventListener('DOMContentLoaded', () => {
+      // DOM元素
+      const nfcModal = document.getElementById('nfcModal');
+      const visitorNameInput = document.getElementById('visitorName');
+      const confirmNfcBtn = document.getElementById('confirmNfcBtn');
+      const cancelNfcBtn = document.getElementById('cancelNfcBtn');
+      const visitorList = document.getElementById('visitorList');
+      const visitorCount = document.getElementById('visitorCount');
+      
+      // 从localStorage加载访客数据
+      let visitors = JSON.parse(localStorage.getItem('nfcVisitors')) || [];
+      
+      // 更新访客列表和计数
+      function updateVisitorList() {
+        // 保存到localStorage
+        localStorage.setItem('nfcVisitors', JSON.stringify(visitors));
+        
+        // 更新计数
+        visitorCount.textContent = visitors.length;
+        
+        // 更新列表
+        if (visitors.length === 0) {
+          visitorList.innerHTML = `
+            <div class="text-center text-gray-500 py-4">
+              <i class="fa fa-hourglass-half mr-2"></i> No visitors yet
+            </div>
+          `;
+          return;
+        }
+        
+        visitorList.innerHTML = '';
+        // 只显示最近的10个访客
+        const recentVisitors = visitors.slice(-10).reverse();
+        
+        recentVisitors.forEach(visitor => {
+          const visitorEl = document.createElement('div');
+          visitorEl.className = 'visitor-card fade-in';
+          visitorEl.innerHTML = `
+            <div class="visitor-name">${visitor.name}</div>
+            <div class="visitor-time">
+              <i class="fa fa-clock-o mr-1"></i> ${new Date(visitor.time).toLocaleString()}
+            </div>
+          `;
+          visitorList.appendChild(visitorEl);
+        });
+      }
+      
+      // 初始化显示
+      updateVisitorList();
+      
+      // 模拟NFC卡片检测
+      function simulateNFCDetection() {
+        // 随机延迟1-5秒后显示模态框
+        const delay = Math.floor(Math.random() * 4000) + 1000;
+        setTimeout(() => {
+          nfcModal.classList.remove('hidden');
+          visitorNameInput.focus();
+        }, delay);
+      }
+      
+      // 确认添加访客
+      confirmNfcBtn.addEventListener('click', () => {
+        const name = visitorNameInput.value.trim();
+        if (name) {
+          // 添加访客
+          visitors.push({
+            name,
+            time: new Date().toISOString()
+          });
+          
+          // 更新列表
+          updateVisitorList();
+          
+          // 隐藏模态框
+          nfcModal.classList.add('hidden');
+          
+          // 清空输入
+          visitorNameInput.value = '';
+          
+          // 添加成功动画效果
+          const successAnimation = document.createElement('div');
+          successAnimation.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg fade-in z-50';
+          successAnimation.innerHTML = `<i class="fa fa-check mr-1"></i> Welcome, ${name}! You've been added to the visitor list.`;
+          document.body.appendChild(successAnimation);
+          
+          setTimeout(() => {
+            successAnimation.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => {
+              document.body.removeChild(successAnimation);
+            }, 500);
+          }, 3000);
+        } else {
+          // 抖动效果
+          visitorNameInput.classList.add('shake');
+          setTimeout(() => {
+            visitorNameInput.classList.remove('shake');
+          }, 500);
+        }
+      });
+      
+      // 取消添加
+      cancelNfcBtn.addEventListener('click', () => {
+        nfcModal.classList.add('hidden');
+        visitorNameInput.value = '';
+      });
+      
+      // 为演示目的，自动触发NFC检测
+      simulateNFCDetection();
+      
+      // 实际应用中，这里应该监听真实的NFC事件
+      // 例如使用Web NFC API（如果浏览器支持）
+      // 参考：https://developer.mozilla.org/en-US/docs/Web/API/Web_NFC_API
+    });
+  </script>
 </body>
 </html>    
