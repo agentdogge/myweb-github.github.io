@@ -73,6 +73,21 @@
       .new-item {
         @apply bg-counter/10 border-l-4 border-counter;
       }
+      .shake {
+        animation: shake 0.5s;
+      }
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
     }
   </style>
 </head>
@@ -99,6 +114,29 @@
         </button>
         <button id="confirmNfcBtn" class="flex-1 bg-counter text-white px-4 py-3 rounded-lg transition-all hover:bg-counter/90 active:scale-95">
           <i class="fa fa-check mr-1"></i> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认提交模态框 -->
+  <div id="confirmSubmitModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden fade-in">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-counter/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa fa-question-circle text-2xl text-counter"></i>
+        </div>
+        <h4 class="text-xl font-bold text-gray-800">Confirm Submission</h4>
+        <p class="text-gray-600 mt-2" id="confirmMessage">
+          You are about to submit your information. This action cannot be undone.
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <button id="cancelSubmitBtn" class="flex-1 bg-gray-200 text-gray-700 px-4 py-3 rounded-lg transition-all hover:bg-gray-300 active:scale-95">
+          Cancel
+        </button>
+        <button id="submitBtn" class="flex-1 bg-counter text-white px-4 py-3 rounded-lg transition-all hover:bg-counter/90 active:scale-95">
+          <i class="fa fa-check mr-1"></i> Submit
         </button>
       </div>
     </div>
@@ -252,15 +290,23 @@
     document.addEventListener('DOMContentLoaded', () => {
       // DOM元素
       const nfcModal = document.getElementById('nfcModal');
+      const confirmSubmitModal = document.getElementById('confirmSubmitModal');
       const visitorNameInput = document.getElementById('visitorName');
       const confirmNfcBtn = document.getElementById('confirmNfcBtn');
       const cancelNfcBtn = document.getElementById('cancelNfcBtn');
+      const cancelSubmitBtn = document.getElementById('cancelSubmitBtn');
+      const submitBtn = document.getElementById('submitBtn');
       const visitorList = document.getElementById('visitorList');
       const visitorCount = document.getElementById('visitorCount');
       const scrollContainer = visitorList.parentElement;
+      const confirmMessage = document.getElementById('confirmMessage');
       
       // 从localStorage加载访客数据
       let visitors = JSON.parse(localStorage.getItem('nfcVisitors')) || [];
+      let currentUserName = '';
+      
+      // 检查用户是否已提交过
+      const hasSubmitted = localStorage.getItem('nfcUserSubmitted') === 'true';
       
       // 更新访客列表和计数
       function updateVisitorList() {
@@ -328,11 +374,86 @@
         }
       }
       
+      // 检查用户名是否已存在
+      function checkUserNameExists(name) {
+        return visitors.some(visitor => visitor.name.toLowerCase() === name.toLowerCase());
+      }
+      
+      // 确认提交
+      function confirmSubmission() {
+        const name = visitorNameInput.value.trim();
+        
+        if (!name) {
+          // 抖动效果
+          visitorNameInput.classList.add('shake');
+          setTimeout(() => {
+            visitorNameInput.classList.remove('shake');
+          }, 500);
+          return;
+        }
+        
+        // 检查用户名是否已存在
+        if (checkUserNameExists(name)) {
+          confirmMessage.textContent = `The name "${name}" already exists in the visitor list. Do you still want to submit it?`;
+        } else {
+          confirmMessage.textContent = `You are about to submit "${name}" to the visitor list. This action cannot be undone.`;
+        }
+        
+        currentUserName = name;
+        confirmSubmitModal.classList.remove('hidden');
+      }
+      
+      // 提交访客信息
+      function submitVisitor() {
+        if (!currentUserName) return;
+        
+        // 添加访客
+        visitors.push({
+          name: currentUserName,
+          time: new Date().toISOString()
+        });
+        
+        // 更新列表
+        updateVisitorList();
+        
+        // 标记用户已提交
+        localStorage.setItem('nfcUserSubmitted', 'true');
+        
+        // 隐藏模态框
+        confirmSubmitModal.classList.add('hidden');
+        nfcModal.classList.add('hidden');
+        
+        // 清空输入
+        visitorNameInput.value = '';
+        
+        // 添加成功动画效果
+        const successAnimation = document.createElement('div');
+        successAnimation.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg fade-in z-50';
+        successAnimation.innerHTML = `<i class="fa fa-check mr-1"></i> Welcome, ${currentUserName}! You've been added to the visitor list.`;
+        document.body.appendChild(successAnimation);
+        
+        setTimeout(() => {
+          successAnimation.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+          setTimeout(() => {
+            document.body.removeChild(successAnimation);
+          }, 500);
+        }, 3000);
+        
+        // 重置当前用户名
+        currentUserName = '';
+      }
+      
       // 初始化显示
       updateVisitorList();
       
       // 模拟NFC卡片检测
       function simulateNFCDetection() {
+        // 如果用户已提交，不再显示模态框
+        if (hasSubmitted) {
+          console.log('User has already submitted information.');
+          return;
+        }
+        
         // 随机延迟1-5秒后显示模态框
         const delay = Math.floor(Math.random() * 4000) + 1000;
         setTimeout(() => {
@@ -341,60 +462,28 @@
         }, delay);
       }
       
-      // 确认添加访客
-      confirmNfcBtn.addEventListener('click', () => {
-        const name = visitorNameInput.value.trim();
-        if (name) {
-          // 添加访客
-          visitors.push({
-            name,
-            time: new Date().toISOString()
-          });
-          
-          // 更新列表
-          updateVisitorList();
-          
-          // 隐藏模态框
-          nfcModal.classList.add('hidden');
-          
-          // 清空输入
-          visitorNameInput.value = '';
-          
-          // 添加成功动画效果
-          const successAnimation = document.createElement('div');
-          successAnimation.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg fade-in z-50';
-          successAnimation.innerHTML = `<i class="fa fa-check mr-1"></i> Welcome, ${name}! You've been added to the visitor list.`;
-          document.body.appendChild(successAnimation);
-          
-          setTimeout(() => {
-            successAnimation.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-            setTimeout(() => {
-              document.body.removeChild(successAnimation);
-            }, 500);
-          }, 3000);
-          
-          // 模拟连续访客
-          simulateNFCDetection();
-        } else {
-          // 抖动效果
-          visitorNameInput.classList.add('shake');
-          setTimeout(() => {
-            visitorNameInput.classList.remove('shake');
-          }, 500);
-        }
-      });
-      
-      // 取消添加
+      // 事件监听器
+      confirmNfcBtn.addEventListener('click', confirmSubmission);
       cancelNfcBtn.addEventListener('click', () => {
         nfcModal.classList.add('hidden');
         visitorNameInput.value = '';
         
-        // 继续模拟NFC检测
-        simulateNFCDetection();
+        // 如果用户取消，继续模拟NFC检测
+        if (!hasSubmitted) {
+          simulateNFCDetection();
+        }
       });
       
+      cancelSubmitBtn.addEventListener('click', () => {
+        confirmSubmitModal.classList.add('hidden');
+      });
+      
+      submitBtn.addEventListener('click', submitVisitor);
+      
       // 为演示目的，自动触发NFC检测
-      simulateNFCDetection();
+      if (!hasSubmitted) {
+        simulateNFCDetection();
+      }
     });
   </script>
 </body>
