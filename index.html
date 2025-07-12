@@ -64,6 +64,15 @@
       .counter-badge {
         @apply bg-counter text-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-md;
       }
+      .scroll-container {
+        @apply max-h-[300px] overflow-hidden relative;
+      }
+      .scroll-content {
+        @apply transition-transform duration-500 ease-in-out;
+      }
+      .new-item {
+        @apply bg-counter/10 border-l-4 border-counter;
+      }
     }
   </style>
 </head>
@@ -226,10 +235,12 @@
     <section class="mt-16">
       <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">Recent Visitors</h3>
       <div class="bg-white rounded-xl shadow-lg p-6 max-w-md mx-auto">
-        <div id="visitorList" class="space-y-3">
-          <!-- 访问记录将动态添加到这里 -->
-          <div class="text-center text-gray-500 py-4">
-            <i class="fa fa-hourglass-half mr-2"></i> No visitors yet
+        <div class="scroll-container">
+          <div id="visitorList" class="scroll-content">
+            <!-- 访问记录将动态添加到这里 -->
+            <div class="text-center text-gray-500 py-4">
+              <i class="fa fa-hourglass-half mr-2"></i> No visitors yet
+            </div>
           </div>
         </div>
       </div>
@@ -246,6 +257,7 @@
       const cancelNfcBtn = document.getElementById('cancelNfcBtn');
       const visitorList = document.getElementById('visitorList');
       const visitorCount = document.getElementById('visitorCount');
+      const scrollContainer = visitorList.parentElement;
       
       // 从localStorage加载访客数据
       let visitors = JSON.parse(localStorage.getItem('nfcVisitors')) || [];
@@ -258,7 +270,7 @@
         // 更新计数
         visitorCount.textContent = visitors.length;
         
-        // 更新列表
+        // 如果是首次加载且没有访客，不执行动画
         if (visitors.length === 0) {
           visitorList.innerHTML = `
             <div class="text-center text-gray-500 py-4">
@@ -268,21 +280,52 @@
           return;
         }
         
-        visitorList.innerHTML = '';
-        // 只显示最近的10个访客
-        const recentVisitors = visitors.slice(-10).reverse();
+        // 获取当前滚动位置和高度
+        const currentScrollHeight = visitorList.scrollHeight;
+        const currentOffset = visitorList.offsetHeight;
         
-        recentVisitors.forEach(visitor => {
-          const visitorEl = document.createElement('div');
-          visitorEl.className = 'visitor-card fade-in';
-          visitorEl.innerHTML = `
-            <div class="visitor-name">${visitor.name}</div>
-            <div class="visitor-time">
-              <i class="fa fa-clock-o mr-1"></i> ${new Date(visitor.time).toLocaleString()}
-            </div>
-          `;
-          visitorList.appendChild(visitorEl);
-        });
+        // 创建新的列表项
+        const newVisitor = visitors[visitors.length - 1];
+        const visitorEl = document.createElement('div');
+        visitorEl.className = 'visitor-card new-item fade-in';
+        visitorEl.innerHTML = `
+          <div class="visitor-name">${newVisitor.name}</div>
+          <div class="visitor-time">
+            <i class="fa fa-clock-o mr-1"></i> ${new Date(newVisitor.time).toLocaleString()}
+          </div>
+        `;
+        
+        // 添加到列表顶部
+        if (visitorList.querySelector('.text-center')) {
+          // 如果是第一个元素，替换空状态
+          visitorList.innerHTML = '';
+        }
+        visitorList.prepend(visitorEl);
+        
+        // 获取新的滚动高度
+        const newScrollHeight = visitorList.scrollHeight;
+        const scrollDiff = newScrollHeight - currentScrollHeight;
+        
+        // 设置初始位置
+        visitorList.style.transform = `translateY(${scrollDiff}px)`;
+        
+        // 触发重排
+        void visitorList.offsetWidth;
+        
+        // 应用滚动动画
+        visitorList.style.transform = 'translateY(0)';
+        
+        // 1秒后移除新项样式
+        setTimeout(() => {
+          visitorEl.classList.remove('new-item');
+        }, 1000);
+        
+        // 保持最多显示10条记录
+        if (visitors.length > 10) {
+          // 获取要移除的元素
+          const itemsToRemove = visitorList.querySelectorAll('.visitor-card:nth-child(n+11)');
+          itemsToRemove.forEach(item => item.remove());
+        }
       }
       
       // 初始化显示
@@ -329,6 +372,9 @@
               document.body.removeChild(successAnimation);
             }, 500);
           }, 3000);
+          
+          // 模拟连续访客
+          simulateNFCDetection();
         } else {
           // 抖动效果
           visitorNameInput.classList.add('shake');
@@ -342,14 +388,13 @@
       cancelNfcBtn.addEventListener('click', () => {
         nfcModal.classList.add('hidden');
         visitorNameInput.value = '';
+        
+        // 继续模拟NFC检测
+        simulateNFCDetection();
       });
       
       // 为演示目的，自动触发NFC检测
       simulateNFCDetection();
-      
-      // 实际应用中，这里应该监听真实的NFC事件
-      // 例如使用Web NFC API（如果浏览器支持）
-      // 参考：https://developer.mozilla.org/en-US/docs/Web/API/Web_NFC_API
     });
   </script>
 </body>
